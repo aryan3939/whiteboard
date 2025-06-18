@@ -65,16 +65,14 @@ const Toolbar: React.FC = () => {
     eraserSize,
   } = useSelector((state: RootState) => state.whiteboard.canvas);
 
-const tools = [
-  { id: 'select' as DrawingTool, icon: MousePointer, label: 'Select', shortcut: 'V' },
-  { id: 'pen' as DrawingTool, icon: Pen, label: 'Pen', shortcut: 'P', hasDialog: true },
-  { id: 'laser' as DrawingTool, icon: Zap, label: 'Laser Pointer', shortcut: 'L' }, // Add this line
-  { id: 'pencil' as DrawingTool, icon: Pencil, label: 'Pencil', shortcut: '', hasDialog: true },
-  { id: 'brush' as DrawingTool, icon: Paintbrush, label: 'Brush', shortcut: 'B', hasDialog: true },
-  { id: 'eraser' as DrawingTool, icon: Eraser, label: 'Eraser', shortcut: 'E', hasDialog: true },
-  { id: 'text' as DrawingTool, icon: Type, label: 'Text', shortcut: 'T' },
-];
-
+  const tools = [
+    { id: 'select' as DrawingTool, icon: MousePointer, label: 'Select', shortcut: 'V' },
+    { id: 'pen' as DrawingTool, icon: Pen, label: 'Pen', shortcut: 'P', hasDialog: true },
+    { id: 'pencil' as DrawingTool, icon: Pencil, label: 'Pencil', shortcut: '', hasDialog: true },
+    { id: 'brush' as DrawingTool, icon: Paintbrush, label: 'Brush', shortcut: 'B', hasDialog: true },
+    { id: 'eraser' as DrawingTool, icon: Eraser, label: 'Eraser', shortcut: 'E', hasDialog: true },
+    { id: 'text' as DrawingTool, icon: Type, label: 'Text', shortcut: 'T' },
+  ];
 
   const shapes = [
     { id: 'rectangle' as DrawingTool, icon: Square, label: 'Rectangle' },
@@ -338,6 +336,7 @@ const tools = [
           { id: 'felt-tip' as PenType, label: 'Felt-tip', desc: 'Bold strokes' },
           { id: 'gel' as PenType, label: 'Gel', desc: 'Smooth, vibrant' },
           { id: 'fountain' as PenType, label: 'Fountain', desc: 'Pressure sensitive' },
+          { id: 'laser' as PenType, label: 'Laser Pointer', desc: 'Temporary marks' },
         ];
         break;
       case 'pencil':
