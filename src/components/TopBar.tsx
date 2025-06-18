@@ -1,27 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Users, Share, Download, Undo, Redo, X, Copy, Check, Palette, ChevronDown, Save, Maximize, Minimize } from 'lucide-react';
+import { Users, Share, Download, Undo, Redo, X, Copy, Check, Palette, ChevronDown, Save, Maximize, Minimize, Settings, LogOut } from 'lucide-react';
 import { RootState } from '../store';
 import { 
   setBackgroundType, 
   setBackgroundColor,
   undo,
-  redo
+  redo,
+  setRoomId
 } from '../store/whiteboardSlice';
 import { BackgroundType } from '../types';
 
-const TopBar: React.FC = () => {
+interface TopBarProps {
+  onChangeRoom: () => void;
+}
+
+const TopBar: React.FC<TopBarProps> = ({ onChangeRoom }) => {
   const dispatch = useDispatch();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showBackgroundMenu, setShowBackgroundMenu] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showRoomMenu, setShowRoomMenu] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
   const [gridLineColor, setGridLineColor] = useState('#e5e7eb');
   const [ruledLineColor, setRuledLineColor] = useState('#d1d5db');
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  const { users, elements } = useSelector((state: RootState) => state.whiteboard);
+  const { users, elements, roomId } = useSelector((state: RootState) => state.whiteboard);
   const { 
     backgroundColor, 
     backgroundType,
@@ -51,6 +57,9 @@ const TopBar: React.FC = () => {
       const target = event.target as Element;
       if (!target.closest('.background-dropdown') && !target.closest('.background-button')) {
         setShowBackgroundMenu(false);
+      }
+      if (!target.closest('.room-dropdown') && !target.closest('.room-button')) {
+        setShowRoomMenu(false);
       }
     };
 
@@ -429,13 +438,58 @@ const TopBar: React.FC = () => {
     return option ? option.label : 'Custom';
   };
 
+  const handleLeaveRoom = () => {
+    dispatch(setRoomId(''));
+    setShowRoomMenu(false);
+  };
+
   return (
     <>
       {/* Top Navigation Bar */}
       <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-xl border border-gray-200 px-4 py-2 flex items-center gap-4 z-20 max-w-6xl">
         
+        {/* Room Info */}
+        <div className="relative">
+          <button
+            className="room-button flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+            onClick={() => setShowRoomMenu(!showRoomMenu)}
+            title="Room settings"
+          >
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="font-medium">{roomId}</span>
+            <ChevronDown size={14} className={`transition-transform duration-200 ${showRoomMenu ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Room Dropdown */}
+          {showRoomMenu && (
+            <div className="room-dropdown absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 p-3 min-w-64 z-30 animate-slideDown">
+              <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">
+                Room: {roomId}
+              </div>
+              
+              <div className="space-y-2">
+                <button
+                  onClick={onChangeRoom}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200"
+                >
+                  <Settings size={16} className="text-gray-600" />
+                  <span className="font-medium">Change Room</span>
+                </button>
+                
+                <button
+                  onClick={handleLeaveRoom}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg border border-red-200 hover:bg-red-50 text-red-600 transition-all duration-200"
+                >
+                  <LogOut size={16} />
+                  <span className="font-medium">Leave Room</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* User Metrics */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
           <Users size={16} className="text-gray-600" />
           <div className="flex -space-x-2">
             {users.slice(0, 4).map((user) => (

@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { store } from './store';
-import { setCurrentUser, setRoomId, setSelectedTool, undo, redo } from './store/whiteboardSlice';
+import { setCurrentUser, setSelectedTool, undo, redo } from './store/whiteboardSlice';
 import Canvas from './components/Canvas';
 import Toolbar from './components/Toolbar';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
 import ConnectionStatus from './components/ConnectionStatus';
+import RoomSelectionModal from './components/RoomSelectionModal';
 import { User } from './types';
+import { useSelector } from 'react-redux';
+import { RootState } from './store';
 
 const generateUserColor = () => {
   const colors = [
@@ -27,6 +30,9 @@ const generateUserName = () => {
 };
 
 const WhiteboardApp: React.FC = () => {
+  const [showRoomModal, setShowRoomModal] = useState(false);
+  const roomId = useSelector((state: RootState) => state.whiteboard.roomId);
+
   useEffect(() => {
     // Initialize user
     const user: User = {
@@ -38,7 +44,6 @@ const WhiteboardApp: React.FC = () => {
     };
 
     store.dispatch(setCurrentUser(user));
-    store.dispatch(setRoomId('room-1'));
 
     // Set up keyboard shortcuts
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -102,13 +107,31 @@ const WhiteboardApp: React.FC = () => {
     };
   }, []);
 
+  // Show room selection modal if no room is selected
+  if (!roomId) {
+    return (
+      <div className="w-full h-screen bg-gray-50 overflow-hidden relative">
+        <RoomSelectionModal 
+          isOpen={true} 
+          onClose={() => {}} // Can't close if no room selected
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-screen bg-gray-50 overflow-hidden relative">
       <Canvas />
       <Toolbar />
-      <TopBar />
+      <TopBar onChangeRoom={() => setShowRoomModal(true)} />
       <BottomBar />
       <ConnectionStatus />
+      
+      {/* Room Selection Modal */}
+      <RoomSelectionModal 
+        isOpen={showRoomModal} 
+        onClose={() => setShowRoomModal(false)} 
+      />
     </div>
   );
 };
