@@ -446,18 +446,19 @@ const TopBar: React.FC<TopBarProps> = ({ onChangeRoom }) => {
   return (
     <>
       {/* Top Navigation Bar */}
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-xl border border-gray-200 px-4 py-2 flex items-center gap-4 z-20 max-w-6xl">
+      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-xl border border-gray-200 px-2 py-1 flex items-center gap-2 z-20 max-w-6xl">
         
         {/* Room Info */}
         <div className="relative">
           <button
-            className="room-button flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
+            className="room-button flex items-center gap-2 px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
             onClick={() => setShowRoomMenu(!showRoomMenu)}
             title="Room settings"
           >
+
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="font-medium">{roomId}</span>
-            <ChevronDown size={14} className={`transition-transform duration-200 ${showRoomMenu ? 'rotate-180' : ''}`} />
+            <ChevronDown size={12} className={`transition-transform duration-200 ${showRoomMenu ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Room Dropdown */}
@@ -490,15 +491,16 @@ const TopBar: React.FC<TopBarProps> = ({ onChangeRoom }) => {
 
         {/* User Metrics */}
         <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
-          <Users size={16} className="text-gray-600" />
-          <div className="flex -space-x-2">
+          <Users size={14} className="text-gray-600" />
+          <div className="flex -space-x-1">
             {users.slice(0, 4).map((user) => (
               <div
                 key={user.id}
-                className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow-sm"
+                className="w-5 h-5 rounded-full border-1 border-white flex items-center justify-center text-white text-xs font-bold shadow-sm"
                 style={{ backgroundColor: user.color }}
                 title={user.name}
               >
+
                 {user.name.charAt(0).toUpperCase()}
               </div>
             ))}
@@ -508,13 +510,13 @@ const TopBar: React.FC<TopBarProps> = ({ onChangeRoom }) => {
               </div>
             )}
           </div>
-          <span className="text-sm text-gray-600 font-medium">
+          <span className="text-xs text-gray-600 font-medium">
             {users.length} {users.length === 1 ? 'user' : 'users'}
           </span>
         </div>
 
         {/* Undo/Redo Controls - Clean icons only */}
-        <div className="flex items-center gap-1 border-l border-gray-200 pl-4">
+        <div className="flex items-center gap-1 border-l border-gray-200 pl-2">
           <button
             onClick={handleUndo}
             disabled={past.length === 0}
@@ -543,7 +545,7 @@ const TopBar: React.FC<TopBarProps> = ({ onChangeRoom }) => {
         </div>
 
         {/* Background Controls */}
-        <div className="relative border-l border-gray-200 pl-4">
+        <div className="relative border-l border-gray-200 pl-2">
           <button
             className="background-button flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"
             onClick={() => setShowBackgroundMenu(!showBackgroundMenu)}
@@ -587,7 +589,8 @@ const TopBar: React.FC<TopBarProps> = ({ onChangeRoom }) => {
                 <label className="block text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">
                   Background Color
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3"> {/* Modified User Metrics div */}
+
                   <input
                     type="color"
                     value={backgroundColor}
@@ -644,7 +647,7 @@ const TopBar: React.FC<TopBarProps> = ({ onChangeRoom }) => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
+        <div className="flex items-center gap-2 border-l border-gray-200 pl-2">
           <button
             onClick={handleShare}
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200"

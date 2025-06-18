@@ -226,19 +226,12 @@ const Canvas: React.FC = () => {
     const effectiveSize = eraserSize * (0.8 + pressure * 0.4);
     
     elements.forEach((element) => {
-      // Skip geometric shapes (rectangles, circles, lines, arrows) - they are persistent
-      if (['rectangle', 'circle', 'line', 'arrow', 'triangle', 'diamond', 'star', 'heart', 'hexagon'].includes(element.type)) {
-        return;
-      }
-      
-      // Check if eraser intersects with freehand drawings only
-      if (element.points.some(p => {
-        const distance = Math.sqrt(Math.pow(p.x - point.x, 2) + Math.pow(p.y - point.y, 2));
-        return distance <= effectiveSize / 2;
-      })) {
+      // Check if eraser intersects with any element
+      if (isPointInElement(point, element, effectiveSize / 2)) {
         elementsToDelete.push(element.id);
       }
     });
+  
 
     // Delete intersecting elements
     elementsToDelete.forEach(id => {

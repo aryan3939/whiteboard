@@ -158,7 +158,7 @@ export const drawElement = (ctx: CanvasRenderingContext2D, element: DrawingEleme
         break;
     }
   } else if (element.type === 'pencil') {
-    ctx.strokeStyle = '#2d3748'; // Graphite color
+    ctx.strokeStyle = element.color;
     ctx.globalAlpha = element.opacity * 0.7;
     switch (element.pencilType) {
       case 'HB':
@@ -443,10 +443,10 @@ export const getBoundingBox = (points: Point[]) => {
 };
 
 // Drag and Drop Utility Functions
-export const isPointInElement = (point: Point, element: DrawingElement): boolean => {
+export const isPointInElement = (point: Point, element: DrawingElement, customTolerance?: number): boolean => {
   if (element.points.length === 0) return false;
   
-  const tolerance = Math.max(element.strokeWidth || 2, 10); // Minimum 10px hit area
+  const tolerance = customTolerance !== undefined ? customTolerance : Math.max(element.strokeWidth || 2, 10); // Minimum 10px hit area
   
   switch (element.type) {
     case 'rectangle':

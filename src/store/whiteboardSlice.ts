@@ -8,7 +8,7 @@ const initialState: WhiteboardState = {
   canvas: {
     zoom: 1,
     pan: { x: 0, y: 0 },
-    gridVisible: true,
+    gridVisible: false,
     snapToGrid: false,
     gridSize: 20,
     selectedTool: 'select',
