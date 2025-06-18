@@ -40,6 +40,7 @@ const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isPanningRef = useRef(false);
   const lastPanPointRef = useRef<Point>({ x: 0, y: 0 });
+  const lastMousePointRef = useRef<Point | null>(null); // Track precise mouse position
   const laserTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pressureRef = useRef(0.5); // For pressure sensitivity
   const dragStartPointRef = useRef<Point | null>(null);
@@ -231,7 +232,6 @@ const Canvas: React.FC = () => {
         elementsToDelete.push(element.id);
       }
     });
-  
 
     // Delete intersecting elements
     elementsToDelete.forEach(id => {
@@ -555,6 +555,9 @@ const Canvas: React.FC = () => {
       const snappedPoint = shouldSnapToGrid ? snapToGrid(point, gridSize) : point;
       const pressure = getTouchPressure(touch);
       
+      // Update last mouse position for touch
+      lastMousePointRef.current = snappedPoint;
+      
       touchStartRef.current[touch.identifier] = snappedPoint;
       touchPressureRef.current[touch.identifier] = pressure;
       updatePressure(touch, touch.identifier);
@@ -628,6 +631,9 @@ const Canvas: React.FC = () => {
       const point = getTouchPoint(touch, canvas);
       const snappedPoint = shouldSnapToGrid ? snapToGrid(point, gridSize) : point;
       const pressure = getTouchPressure(touch);
+      
+      // Update last mouse position for touch
+      lastMousePointRef.current = snappedPoint;
       
       touchPressureRef.current[touch.identifier] = pressure;
       updatePressure(touch, touch.identifier);
@@ -715,10 +721,9 @@ const Canvas: React.FC = () => {
       if (isTouchPanningRef.current) {
         isTouchPanningRef.current = false;
       } else if (isDragging) {
-        const lastTouch = changedTouches[0];
-        if (lastTouch) {
-          const point = getTouchPoint(lastTouch, canvas);
-          completeDrag(point);
+        // Use the last recorded touch position for precise drop
+        if (lastMousePointRef.current) {
+          completeDrag(lastMousePointRef.current);
         }
       } else if (isDrawing) {
         // Finish drawing
@@ -773,6 +778,9 @@ const Canvas: React.FC = () => {
 
     const point = getCanvasPoint(e.nativeEvent, canvas, zoom, pan);
     const snappedPoint = shouldSnapToGrid ? snapToGrid(point, gridSize) : point;
+
+    // Update last mouse position
+    lastMousePointRef.current = snappedPoint;
 
     updatePressure(e);
 
@@ -840,6 +848,9 @@ const Canvas: React.FC = () => {
     const point = getCanvasPoint(e.nativeEvent, canvas, zoom, pan);
     const snappedPoint = shouldSnapToGrid ? snapToGrid(point, gridSize) : point;
 
+    // Always update last mouse position during movement
+    lastMousePointRef.current = snappedPoint;
+
     updatePressure(e);
 
     // Emit cursor position
@@ -877,17 +888,9 @@ const Canvas: React.FC = () => {
     if (isPanningRef.current) {
       isPanningRef.current = false;
     } else if (isDragging) {
-      // Complete drag operation
-      const canvas = canvasRef.current;
-      if (canvas) {
-        const rect = canvas.getBoundingClientRect();
-        const point = getCanvasPoint(
-          { clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 } as MouseEvent,
-          canvas,
-          zoom,
-          pan
-        );
-        completeDrag(point);
+      // Use the precise last mouse position for drop
+      if (lastMousePointRef.current) {
+        completeDrag(lastMousePointRef.current);
       }
     } else if (isDrawing) {
       // Finish drawing (except for eraser which handles deletion in real-time)
