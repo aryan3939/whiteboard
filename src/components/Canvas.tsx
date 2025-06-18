@@ -362,6 +362,20 @@ const Canvas: React.FC = () => {
     }
   };
 
+  // Handle double click for text editing
+  const handleDoubleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const point = getCanvasPoint(e.nativeEvent, canvas, zoom, pan);
+    const clickedElement = findElementAtPoint(point);
+
+    if (clickedElement && clickedElement.type === 'text') {
+      dispatch(setIsEditingText(true));
+      dispatch(setEditingTextId(clickedElement.id));
+    }
+  };
+
   // Redraw canvas
   const redraw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -564,12 +578,7 @@ const Canvas: React.FC = () => {
 
       if (selectedTool === 'select') {
         const clickedElement = findElementAtPoint(point);
-        if (clickedElement && clickedElement.type === 'text') {
-          dispatch(setIsEditingText(true));
-          dispatch(setEditingTextId(clickedElement.id));
-          return;
-        }
-
+        
         handleElementSelection(point, false);
         
         if (selectedElements.length > 0 || (clickedElement && !false)) {
@@ -578,27 +587,34 @@ const Canvas: React.FC = () => {
           isTouchPanningRef.current = true;
         }
       } else if (selectedTool === 'text') {
-        const textElement: DrawingElement = {
-          id: uuidv4(),
-          type: 'text',
-          points: [snappedPoint],
-          color: selectedColor,
-          strokeWidth,
-          opacity,
-          text: '',
-          fontSize,
-          fontFamily,
-          fontWeight,
-          fontStyle,
-          created: Date.now(),
-          updated: Date.now(),
-          userId: currentUser?.id || 'anonymous',
-        };
-
-        dispatch(addElement(textElement));
-        dispatch(setIsEditingText(true));
-        dispatch(setEditingTextId(textElement.id));
-        emitElementCreated(textElement);
+        const clickedElement = findElementAtPoint(point);
+        if (clickedElement && clickedElement.type === 'text') {
+          // If clicking on an existing text element with text tool, edit it
+          dispatch(setIsEditingText(true));
+          dispatch(setEditingTextId(clickedElement.id));
+        } else {
+          // Otherwise, create a new text element
+          const textElement: DrawingElement = {
+            id: uuidv4(),
+            type: 'text',
+            points: [snappedPoint],
+            color: selectedColor,
+            strokeWidth,
+            opacity,
+            text: '',
+            fontSize,
+            fontFamily,
+            fontWeight,
+            fontStyle,
+            created: Date.now(),
+            updated: Date.now(),
+            userId: currentUser?.id || 'anonymous',
+          };
+          dispatch(addElement(textElement));
+          dispatch(setIsEditingText(true));
+          dispatch(setEditingTextId(textElement.id));
+          emitElementCreated(textElement);
+        }
       } else if (selectedTool === 'eraser') {
         handleEraserAction(snappedPoint, pressure);
         dispatch(setIsDrawing(true));
@@ -787,19 +803,11 @@ const Canvas: React.FC = () => {
     if (selectedTool === 'select') {
       const isMultiSelect = e.ctrlKey || e.metaKey;
       
-      // Check if clicking on text element for editing
-      const clickedElement = findElementAtPoint(point);
-      if (clickedElement && clickedElement.type === 'text') {
-        dispatch(setIsEditingText(true));
-        dispatch(setEditingTextId(clickedElement.id));
-        return;
-      }
-
       // Handle element selection
       handleElementSelection(point, isMultiSelect);
       
       // Start dragging if we have selected elements
-      if (selectedElements.length > 0 || (clickedElement && !isMultiSelect)) {
+      if (selectedElements.length > 0 || (findElementAtPoint(point) && !isMultiSelect)) {
         startDragging(point);
       } else {
         // Start panning if no elements selected
@@ -807,28 +815,35 @@ const Canvas: React.FC = () => {
         lastPanPointRef.current = { x: e.clientX, y: e.clientY };
       }
     } else if (selectedTool === 'text') {
-      // Create text element
-      const textElement: DrawingElement = {
-        id: uuidv4(),
-        type: 'text',
-        points: [snappedPoint],
-        color: selectedColor,
-        strokeWidth,
-        opacity,
-        text: '',
-        fontSize,
-        fontFamily,
-        fontWeight,
-        fontStyle,
-        created: Date.now(),
-        updated: Date.now(),
-        userId: currentUser?.id || 'anonymous',
-      };
+      const clickedElement = findElementAtPoint(point);
+      if (clickedElement && clickedElement.type === 'text') {
+        // If clicking on an existing text element with text tool, edit it
+        dispatch(setIsEditingText(true));
+        dispatch(setEditingTextId(clickedElement.id));
+      } else {
+        // Otherwise, create a new text element
+        const textElement: DrawingElement = {
+          id: uuidv4(),
+          type: 'text',
+          points: [snappedPoint],
+          color: selectedColor,
+          strokeWidth,
+          opacity,
+          text: '',
+          fontSize,
+          fontFamily,
+          fontWeight,
+          fontStyle,
+          created: Date.now(),
+          updated: Date.now(),
+          userId: currentUser?.id || 'anonymous',
+        };
 
-      dispatch(addElement(textElement));
-      dispatch(setIsEditingText(true));
-      dispatch(setEditingTextId(textElement.id));
-      emitElementCreated(textElement);
+        dispatch(addElement(textElement));
+        dispatch(setIsEditingText(true));
+        dispatch(setEditingTextId(textElement.id));
+        emitElementCreated(textElement);
+      }
     } else if (selectedTool === 'eraser') {
       // Handle eraser action
       handleEraserAction(snappedPoint);
@@ -986,6 +1001,7 @@ const Canvas: React.FC = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={handleTouchEnd}
+        onDoubleClick={handleDoubleClick}
         role="img"
         aria-label="Collaborative whiteboard canvas"
         tabIndex={0}
