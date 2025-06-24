@@ -8,7 +8,7 @@ A Miro-like collaborative whiteboard application built with React, TypeScript, a
 
 ## Video Demo
 
-[Link to Video Demo]
+[https://www.youtube.com/watch?v=jHtbhEREMNc](https://www.youtube.com/watch?v=jHtbhEREMNc/)
 
 ## Features
 
