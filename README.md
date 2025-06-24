@@ -2,11 +2,20 @@
 
 A Miro-like collaborative whiteboard application built with React, TypeScript, and Socket.io for real-time collaboration.
 
+## Live Demo
+
+[https://whiteboardstry.onrender.com/](https://whiteboardstry.onrender.com/)
+
+## Video Demo
+
+[Link to Video Demo]
+
 ## Features
 
 ### Core Drawing Functionality
+
 - **Infinite Canvas**: Zoom (25%-400%) and pan navigation
-- **Drawing Tools**: 
+- **Drawing Tools**:
   - Freehand pen with adjustable stroke width (2-20px)
   - Basic shapes (rectangle, circle, line, arrow)
   - Text tool with font options
@@ -16,14 +25,16 @@ A Miro-like collaborative whiteboard application built with React, TypeScript, a
 - **Undo/Redo**: Full history management with keyboard shortcuts
 
 ### Real-time Collaboration
+
 - **Live Cursors**: See other users' cursor positions in real-time
 - **Active Users**: Display list of currently connected users
 - **Real-time Updates**: Synchronized drawing across all connected users
 - **Auto-reconnection**: Handles connection drops gracefully
 
 ### Professional UI
+
 - **Responsive Design**: Works on desktop, tablet, and mobile
-- **Keyboard Shortcuts**: 
+- **Keyboard Shortcuts**:
   - V: Select tool
   - P: Pen tool
   - T: Text tool
@@ -38,6 +49,7 @@ A Miro-like collaborative whiteboard application built with React, TypeScript, a
 ## Technology Stack
 
 ### Frontend
+
 - **React 18+** with TypeScript
 - **Redux Toolkit** for state management
 - **Tailwind CSS** for styling
@@ -46,6 +58,7 @@ A Miro-like collaborative whiteboard application built with React, TypeScript, a
 - **Lucide React** for icons
 
 ### Backend
+
 - **Node.js** with Express
 - **Socket.io Server** for real-time communication
 - **In-memory storage** for room data (can be extended with database)
@@ -53,23 +66,27 @@ A Miro-like collaborative whiteboard application built with React, TypeScript, a
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
-git clone <repository-url>
-cd collaborative-whiteboard
+git clone https://github.com/aryan3939/whiteboard
+cd whiteboard
 ```
 
 2. **Install dependencies**
+
 ```bash
-npm install
+npm install or npm i
 ```
 
 3. **Start the development server**
+
 ```bash
 # Start the frontend (Vite dev server)
 npm run dev
@@ -79,76 +96,39 @@ npm run server
 ```
 
 4. **Open your browser**
-Navigate to `http://localhost:5173`
+   Navigate to `http://localhost:5173`
 
-The Socket.io server will be running on `http://localhost:3001`
-
-### Production Build
-
-```bash
-# Build the frontend
-npm run build
-
-# Start production server
-NODE_ENV=production npm run server
-```
+   The Socket.io server will be running on `http://localhost:3001`
 
 ## Architecture
 
 ### State Management
+
 The application uses Redux Toolkit for state management with the following structure:
+
 - **Canvas State**: Zoom, pan, grid settings, selected tools
 - **Drawing Elements**: All drawn shapes and paths
 - **Users**: Connected users and their cursors
 - **History**: Undo/redo functionality
 
 ### Real-time Communication
+
 Socket.io handles real-time features:
+
 - User presence and cursor tracking
 - Element creation, updates, and deletion
 - Room-based collaboration
 - Automatic reconnection
 
 ### Canvas Rendering
+
 Custom canvas utilities handle:
+
 - Element rendering with proper transformations
 - Grid system with snap-to-grid
 - User cursor visualization
 - Zoom and pan transformations
 
-## Performance Optimizations
-
-- **Efficient Rendering**: Only redraws when necessary
-- **Memory Management**: Proper cleanup of event listeners
-- **Debounced Updates**: Optimized real-time synchronization
-- **Canvas Optimization**: Uses requestAnimationFrame for smooth drawing
-
-## Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
 ## License
 
-MIT License - see the LICENSE file for details
-
-## Roadmap
-
-- [ ] Authentication system
-- [ ] Persistent storage with database
-- [ ] Advanced shape tools
-- [ ] Image upload and embedding
-- [ ] Export functionality (PNG, SVG, PDF)
-- [ ] Collaborative text editing
-- [ ] Voice/video chat integration
-- [ ] Mobile app (React Native)
+[MIT License](LICENSE) - see the LICENSE file for details
